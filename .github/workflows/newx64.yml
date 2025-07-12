@@ -1,4 +1,4 @@
-name: Build OpenWrt x86 + RTL88x2BU
+name: Build OpenWrt x86 + RTL88x2BU new
 
 on:
   workflow_dispatch:
