@@ -31,11 +31,7 @@ jobs:
         run: |
           cd openwrt
           curl https://raw.githubusercontent.com/piratepope/rtl88x2bu-cl/refs/heads/main/config.txt -o .config
-          
-      - name: Build OpenWrt toolchain
-        run: |
-          cd openwrt
-          make toolchain/install V=s
+      
 
       - name: Build RTL8812BU driver package
         run: |
