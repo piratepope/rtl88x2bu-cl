@@ -53,5 +53,7 @@ jobs:
           echo using $(nproc) cores
           make -j$(nproc)
 
-      - name: Upload OpenWrt x86 image artifact
-        uses: actions
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rtl88x2bu-ipk
+          path: openwrt/bin/packages/x86_64/*/kmod-rtl88x2bu*.ipk
