@@ -1,54 +1,45 @@
-name: Build rtl88x2bu for x86_64
+name: Build RTL8812BU OpenWrt Driver
 
 on:
   workflow_dispatch:
+  push:
+    branches: [ main ]
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
-
+    runs-on: ubuntu-latest
     steps:
-    - name: Install dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y build-essential clang flex g++ gawk gcc-multilib \
-            gettext git libncurses-dev libssl-dev python3-distutils rsync unzip \
-            zlib1g-dev file wget libelf-dev python3 python3-pip openssl libdeflate-dev
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential gawk gcc-multilib flex git gettext libssl-dev python3-distutils python3-setuptools rsync unzip zlib1g-dev file wget
 
-    - name: Clone OpenWrt
-      run: |
-        git clone https://github.com/openwrt/openwrt.git
-        cd openwrt
-        ./scripts/feeds update -a
-        ./scripts/feeds install -a
+      - name: Clone OpenWrt
+        run: |
+          git clone --depth=1 -b openwrt-23.05 https://github.com/openwrt/openwrt.git
+          cd openwrt
+          echo "src-git packages https://github.com/openwrt/packages.git" > feeds.conf
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
 
-    - name: Add rtl88x2bu-cl package
-      run: |
-        mkdir -p openwrt/package/kernel
-        git clone https://github.com/mirobiala/rtl88x2bu-cl openwrt/package/kernel/rtl88x2bu-cl
+      - name: Add RTL8812BU package
+        run: |
+          cd openwrt/package/kernel
+          git clone https://github.com/hkucs-makerlab/openwrt-rtl8812bu-package rtl88x2bu
 
-    - name: Configure for x86_64 and enable package
-      run: |
-        cd openwrt
-        echo "CONFIG_TARGET_x86=y" >> .config
-        echo "CONFIG_TARGET_x86_64=y" >> .config
-        echo "CONFIG_TARGET_x86_64_Generic=y" >> .config
-        echo "CONFIG_PACKAGE_rtl88x2bu-cl=m" >> .config
-        make defconfig
-    - name: Rebuild OpenWrt host tools
-      run: |
-        cd openwrt
-        make tools/clean
-        make tools/install -j$(nproc)    
+      - name: Configure build
+        run: |
+          cd openwrt
+          make defconfig
+          ./scripts/feeds install rtl88x2bu
 
-    - name: Build package
-      run: |
-        cd openwrt
-        make package/kernel/rtl88x2bu-cl/compile V=s -j$(nproc)
+      - name: Build RTL8812BU driver package
+        run: |
+          cd openwrt
+          make package/kernel/rtl88x2bu/compile V=s
 
-    - name: Upload compiled .ipk
-      uses: actions/upload-artifact@v4
-      with:
-        name: rtl88x2bu-ipk
-        path: |
-          openwrt/bin/packages/x86_64/*/kmod-rtl88x2bu*.ipk
+      - name: Upload driver package artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: rtl88x2bu-ipk
+          path: openwrt/bin/packages/**/kmod-rtl88x2bu*.ipk
