@@ -39,7 +39,7 @@ jobs:
           make package/kernel/rtl88x2bu/compile V=s
 
       - name: Upload driver package artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: rtl88x2bu-ipk
           path: openwrt/bin/packages/**/kmod-rtl88x2bu*.ipk
