@@ -30,9 +30,8 @@ jobs:
       - name: Configure build for x86_64 target
         run: |
           cd openwrt
-          make defconfig
-          ./scripts/feeds install rtl88x2bu
-
+          curl https://raw.githubusercontent.com/piratepope/rtl88x2bu-cl/refs/heads/main/config.txt -o .config
+          
       - name: Build OpenWrt toolchain
         run: |
           cd openwrt
