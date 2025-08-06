@@ -36,7 +36,7 @@ jobs:
         run: |
            cd openwrt
            echo using $(nproc) cores
-          make -j1 V=s package/kernel/rtl88x2bu-cl/compile
+           make -j1 V=s package/kernel/rtl88x2bu-cl/compile
       - uses: actions/upload-artifact@v4
         with:
           name: x64
