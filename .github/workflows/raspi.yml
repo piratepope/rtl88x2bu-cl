@@ -1,4 +1,4 @@
-name: Make OpenWRT raspi 4 88x2bu image
+name: Make OpenWRT raspi 4 88x2bu image driver
 on:
   workflow_dispatch:
 
